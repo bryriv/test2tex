@@ -1,0 +1,14 @@
+\question ##question## \textit{\textbf{(##tek##)}}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=##scale##]{##image##}
+\end{figure}
+
+\begin{solution}
+##solution##
+\end{solution}
+
+\begin{addmargin}[2em]{5em} Record your answer on the grid. Be sure to use the correct place value.
+\end{addmargin}
+\vspace*{.1in}

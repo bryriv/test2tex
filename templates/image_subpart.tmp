@@ -1,0 +1,17 @@
+\question ##question##
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=##scale##]{##image##}
+\end{figure}
+
+\begin{addmargin}[2em]{5em} ##subpart## \textit{\textbf{(##tek##)}}
+\end{addmargin}
+
+\setlength\columnsep{-1cm}
+\begin{multicols}{2}
+    \begin{choices}
+##choices##
+    \end{choices}
+\end{multicols}
+\vspace*{.1in}
