@@ -1,0 +1,9 @@
+\question ##question## \textit{\textbf{(##tek##)}}
+
+\setlength\columnsep{-1cm}
+\begin{multicols}{2}
+    \begin{choices}
+##choices##
+    \end{choices}
+\end{multicols}
+\vspace*{.1in}

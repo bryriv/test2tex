@@ -1,0 +1,29 @@
+% header
+\documentclass[12pt]{exam}
+\usepackage[utf8]{inputenc}
+\usepackage{palatino}
+\usepackage[margin=.75in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{multicol}
+\usepackage{ulem}
+\usepackage{scrextend}
+\usepackage{graphicx}
+\graphicspath{ {##graphicspath##} }
+
+\pagestyle{headandfoot}
+\firstpageheader{}{}{##headerid##}
+\footer{6th - Math}{\thepage}{NMS 2014-2015}
+
+\begin{document}
+\printanswers
+\noindent
+\begin{tabular}{llr}
+\textbf{Name:} \makebox[3.4in]{\hrulefill} & Period: \makebox[.5in]{\hrulefill} & Date: \makebox[1in]{\hrulefill}
+\end{tabular}
+
+\begin{center}
+\textbf{\uline{\normalsize{##title##}}}
+\end{center}
+\vspace*{.1in}
+
+\begin{questions}
