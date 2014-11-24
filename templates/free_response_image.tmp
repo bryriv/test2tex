@@ -1,0 +1,13 @@
+\question ##question## \textit{\textbf{(##tek##)}}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=##scale##]{##image##}
+\end{figure}
+
+\fillwithlines{##lines##in}
+
+\begin{addmargin}[2em]{5em} \textit{\textbf{Remember to use complete sentences.}}
+\end{addmargin}
+\begin{addmargin}[2em]{5em} \textit{\textbf{PLEASE LEAVE BLANK ON YOUR SCANTRON.}}
+\end{addmargin}

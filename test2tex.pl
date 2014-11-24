@@ -7,37 +7,38 @@ use Config::General qw(ParseConfig);
 use File::Slurp qw(read_file write_file);
 use Data::Dumper;
 
-my $template_dir = './templates';
-
-my $conf_file = './test.conf';
-#my $conf_file = shift || die 'no input file';
+my $conf_file = shift || die 'no input file';
 my %conf = ParseConfig($conf_file);
 
-# print Dumper \%conf;
-# print "path: ", $conf{header}->{graphicspath}, "\n";
+my $template_dir = './templates';
+my $templates = load_templates($template_dir);
+
 my @tex;
 
 # header info
 my @header_params = qw(graphicspath headerid title);
-my $header = read_file $template_dir . '/header.tmp';
+my $header = $templates->{header};
 for my $var (@header_params) {
     $header =~ s/##$var##/$conf{header}->{$var}/;
 }
-
 push @tex, $header;
 
 # questions
 for my $hash (@{$conf{question}}) {
-    push @tex, default($hash) if !$hash->{format} or $hash->{format} eq 'default';
+    push @tex, default($hash, 'default') if !$hash->{format} or $hash->{format} eq 'default';
     push @tex, image_subpart($hash) if $hash->{format} eq 'image_subpart';
     push @tex, grid($hash) if $hash->{format} eq 'grid';
+    push @tex, default($hash, 'long_answers') if $hash->{format} eq 'long_answers';
+    push @tex, free_response($hash) if $hash->{format} eq 'free_response';
+    push @tex, free_response_image($hash) if $hash->{format} eq 'free_response_image';
 }
 
 # footer
-push @tex, read_file $template_dir . '/footer.tmp';;
+push @tex, $templates->{footer};
 
 # put pieces together
-my $tex = join "\n", @tex;
+my $tex = join "\n\n", @tex;
+
 # output to file
 print $tex;
 
@@ -45,16 +46,16 @@ print $tex;
 # free_response
 # free_response_image
 # image_subpart
-# long_answer
+# long_answers
 # grid
 
 exit;
 
 
 sub default {
-    my $format = '/default.tmp';
-    my $hash = shift;
-    my $template = read_file $template_dir . $format;
+    my ($hash, $format) = @_;
+    my $template = $templates->{$format};
+
     for my $var ('question', 'tek') {
         $template =~ s/##$var##/$hash->{$var}/;
     }
@@ -69,9 +70,9 @@ sub default {
 }
 
 sub image_subpart {
-    my $format = '/image_subpart.tmp';
-    my $hash = shift;
-    my $template = read_file $template_dir . $format;
+    my ($hash, $format) = @_;
+    my $template = $templates->{image_subpart};
+
     for my $var ('question', 'tek', 'scale', 'image', 'subpart') {
         $template =~ s/##$var##/$hash->{$var}/;
     }
@@ -86,12 +87,45 @@ sub image_subpart {
 }
 
 sub grid {
-    my $format = '/grid.tmp';
-    my $hash = shift;
-    my $template = read_file $template_dir . $format;
+    my ($hash, $format) = @_;
+    my $template = $templates->{grid};
+
     for my $var ('question', 'tek', 'scale', 'image', 'solution') {
         $template =~ s/##$var##/$hash->{$var}/;
     }
     return $template;
+}
 
+sub free_response {
+    my ($hash, $format) = @_;
+    my $template = $templates->{free_response};
+    $hash->{lines} ||= 2.5;
+    for my $var ('question', 'tek', 'lines') {
+        $template =~ s/##$var##/$hash->{$var}/;
+    }
+    return $template;
+}
+
+sub free_response_image {
+    my ($hash, $format) = @_;
+    my $template = $templates->{free_response_image};
+    $hash->{lines} ||= 2.5;
+    for my $var ('question', 'tek', 'lines', 'scale', 'image') {
+        $template =~ s/##$var##/$hash->{$var}/;
+    }
+    return $template;
+}
+
+
+sub load_templates {
+    my $dir = shift;
+    my @templates = (
+        'header', 'default', 'grid', 'long_answers', 'image_subpart',
+        'free_response', 'free_response_image', 'footer',
+    );
+    my %temps;
+    for my $tmp (@templates) {
+        $temps{$tmp} = read_file $dir . "/$tmp.tmp";
+    }
+    return \%temps;
 }
