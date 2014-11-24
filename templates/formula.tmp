@@ -1,5 +1,10 @@
 \question ##question## \textit{\textbf{(TEKS ##tek##)}}
 
+\begin{figure}[h!]
+\centering
+##formula##
+\end{figure}
+
 \setlength\columnsep{-1cm}
 \begin{multicols}{2}
     \begin{choices}

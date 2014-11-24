@@ -1,8 +1,16 @@
-\question ##question## \textit{\textbf{(TEKS ##tek##)}}
+\question ##question##
 
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=##scale##]{##image##}
+\end{figure}
+
+\begin{addmargin}[2em]{5em} ##subpart## \textit{\textbf{(TEKS ##tek##)}}
+\end{addmargin}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=##grid_scale##]{##grid_image##}
 \end{figure}
 
 \begin{solution}

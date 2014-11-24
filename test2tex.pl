@@ -31,6 +31,8 @@ for my $hash (@{$conf{question}}) {
     push @tex, default($hash, 'long_answers') if $hash->{format} eq 'long_answers';
     push @tex, free_response($hash) if $hash->{format} eq 'free_response';
     push @tex, free_response_image($hash) if $hash->{format} eq 'free_response_image';
+    push @tex, formula($hash) if $hash->{format} eq 'formula';
+    push @tex, grid_subpart($hash) if $hash->{format} eq 'grid_subpart';
 }
 
 # footer
@@ -91,6 +93,7 @@ sub grid {
     my $template = $templates->{grid};
 
     for my $var ('question', 'tek', 'scale', 'image', 'solution') {
+        $hash->{$var} ||= '';
         $template =~ s/##$var##/$hash->{$var}/;
     }
     return $template;
@@ -116,12 +119,40 @@ sub free_response_image {
     return $template;
 }
 
+sub formula {
+    my ($hash, $format) = @_;
+    my $template = $templates->{formula};
+
+    for my $var ('question', 'tek', 'formula') {
+        $template =~ s/##$var##/$hash->{$var}/;
+    }
+    my @choices;
+    for my $choice (@{$hash->{choice}}) {
+        my $tex_cmd = $choice->{correct} ? '\CorrectChoice' : '\choice';
+        push @choices, join ' ', ($tex_cmd, $choice->{val});
+    }
+    my $choices = join "\n", @choices;
+    $template =~ s/##choices##/$choices/;
+    return $template;
+}
+
+sub grid_subpart {
+    my ($hash, $format) = @_;
+    my $template = $templates->{grid_subpart};
+
+    for my $var ('question', 'tek', 'scale', 'image', 'subpart', 'solution', 'grid_image', 'grid_scale') {
+        $hash->{$var} ||= '';
+        $template =~ s/##$var##/$hash->{$var}/;
+    }
+    return $template;
+
+}
 
 sub load_templates {
     my $dir = shift;
     my @templates = (
         'header', 'default', 'grid', 'long_answers', 'image_subpart',
-        'free_response', 'free_response_image', 'footer',
+        'free_response', 'free_response_image', 'footer', 'formula', 'grid_subpart',
     );
     my %temps;
     for my $tmp (@templates) {

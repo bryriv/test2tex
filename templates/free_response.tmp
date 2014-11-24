@@ -1,4 +1,4 @@
-\question ##question## \textit{\textbf{(##tek##)}}
+\question ##question## \textit{\textbf{(TEKS ##tek##)}}
 
 \fillwithlines{##lines##in}
 
