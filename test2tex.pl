@@ -24,15 +24,19 @@ for my $var (@header_params) {
 push @tex, $header;
 
 # questions
+my $count = 1;
 for my $hash (@{$conf{question}}) {
+    $hash->{question_num} = $count;
     push @tex, default($hash, 'default') if !$hash->{format} or $hash->{format} eq 'default';
-    push @tex, image_subpart($hash) if $hash->{format} eq 'image_subpart';
+    push @tex, image_subpart($hash, 'image_subpart') if $hash->{format} eq 'image_subpart';
     push @tex, grid($hash) if $hash->{format} eq 'grid';
     push @tex, default($hash, 'long_answers') if $hash->{format} eq 'long_answers';
     push @tex, free_response($hash) if $hash->{format} eq 'free_response';
     push @tex, free_response_image($hash) if $hash->{format} eq 'free_response_image';
     push @tex, formula($hash) if $hash->{format} eq 'formula';
     push @tex, grid_subpart($hash) if $hash->{format} eq 'grid_subpart';
+    push @tex, image_subpart($hash, 'long_answers_subpart') if $hash->{format} eq 'long_answers_subpart';
+    $count++;
 }
 
 # footer
@@ -53,11 +57,11 @@ print $tex;
 
 exit;
 
-
 sub default {
     my ($hash, $format) = @_;
     my $template = $templates->{$format};
 
+    $template =~ s/##question_num##/$hash->{question_num}/;
     for my $var ('question', 'tek') {
         $template =~ s/##$var##/$hash->{$var}/;
     }
@@ -73,8 +77,9 @@ sub default {
 
 sub image_subpart {
     my ($hash, $format) = @_;
-    my $template = $templates->{image_subpart};
+    my $template = $templates->{$format};
 
+    $template =~ s/##question_num##/$hash->{question_num}/;
     for my $var ('question', 'tek', 'scale', 'image', 'subpart') {
         $template =~ s/##$var##/$hash->{$var}/;
     }
@@ -92,6 +97,7 @@ sub grid {
     my ($hash, $format) = @_;
     my $template = $templates->{grid};
 
+    $template =~ s/##question_num##/$hash->{question_num}/;
     for my $var ('question', 'tek', 'scale', 'image', 'solution') {
         $hash->{$var} ||= '';
         $template =~ s/##$var##/$hash->{$var}/;
@@ -102,6 +108,8 @@ sub grid {
 sub free_response {
     my ($hash, $format) = @_;
     my $template = $templates->{free_response};
+
+    $template =~ s/##question_num##/$hash->{question_num}/;
     $hash->{lines} ||= 2.5;
     for my $var ('question', 'tek', 'lines') {
         $template =~ s/##$var##/$hash->{$var}/;
@@ -112,6 +120,8 @@ sub free_response {
 sub free_response_image {
     my ($hash, $format) = @_;
     my $template = $templates->{free_response_image};
+
+    $template =~ s/##question_num##/$hash->{question_num}/;
     $hash->{lines} ||= 2.5;
     for my $var ('question', 'tek', 'lines', 'scale', 'image') {
         $template =~ s/##$var##/$hash->{$var}/;
@@ -123,6 +133,7 @@ sub formula {
     my ($hash, $format) = @_;
     my $template = $templates->{formula};
 
+    $template =~ s/##question_num##/$hash->{question_num}/;
     for my $var ('question', 'tek', 'formula') {
         $template =~ s/##$var##/$hash->{$var}/;
     }
@@ -140,6 +151,7 @@ sub grid_subpart {
     my ($hash, $format) = @_;
     my $template = $templates->{grid_subpart};
 
+    $template =~ s/##question_num##/$hash->{question_num}/;
     for my $var ('question', 'tek', 'scale', 'image', 'subpart', 'solution', 'grid_image', 'grid_scale') {
         $hash->{$var} ||= '';
         $template =~ s/##$var##/$hash->{$var}/;
@@ -153,6 +165,7 @@ sub load_templates {
     my @templates = (
         'header', 'default', 'grid', 'long_answers', 'image_subpart',
         'free_response', 'free_response_image', 'footer', 'formula', 'grid_subpart',
+        'long_answers_subpart',
     );
     my %temps;
     for my $tmp (@templates) {

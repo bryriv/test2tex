@@ -10,9 +10,7 @@
 \end{addmargin}
 
 \setlength\columnsep{-1cm}
-\begin{multicols}{2}
-    \begin{choices}
+\begin{choices}
 ##choices##
-    \end{choices}
-\end{multicols}
+\end{choices}
 \vspace*{.1in}
