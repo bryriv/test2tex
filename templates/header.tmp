@@ -7,8 +7,12 @@
 \usepackage{multicol}
 \usepackage{ulem}
 \usepackage{scrextend}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 \usepackage{gensymb}
 \usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{tabu}
 \graphicspath{ {##graphicspath##} }
 
 \pagestyle{headandfoot}

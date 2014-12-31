@@ -33,9 +33,13 @@ for my $hash (@{$conf{question}}) {
     push @tex, default($hash, 'long_answers') if $hash->{format} eq 'long_answers';
     push @tex, free_response($hash) if $hash->{format} eq 'free_response';
     push @tex, free_response_image($hash) if $hash->{format} eq 'free_response_image';
-    push @tex, formula($hash) if $hash->{format} eq 'formula';
+    push @tex, formula($hash, 'formula') if $hash->{format} eq 'formula';
+    push @tex, formula($hash, 'formula_long_answers') if $hash->{format} eq 'formula_long_answers';
     push @tex, grid_subpart($hash) if $hash->{format} eq 'grid_subpart';
     push @tex, image_subpart($hash, 'long_answers_subpart') if $hash->{format} eq 'long_answers_subpart';
+    push @tex, default_misc_subpart($hash, 'default_misc_subpart') if !$hash->{format} or $hash->{format} eq 'default_misc_subpart';
+    push @tex, free_response_misc_latex($hash, 'free_response_misc_latex') if !$hash->{format} or $hash->{format} eq 'free_response_misc_latex';
+
     $count++;
 }
 
@@ -131,7 +135,7 @@ sub free_response_image {
 
 sub formula {
     my ($hash, $format) = @_;
-    my $template = $templates->{formula};
+    my $template = $templates->{$format};
 
     $template =~ s/##question_num##/$hash->{question_num}/;
     for my $var ('question', 'tek', 'formula') {
@@ -160,12 +164,43 @@ sub grid_subpart {
 
 }
 
+sub default_misc_subpart {
+    my ($hash, $format) = @_;
+    my $template = $templates->{$format};
+
+    $template =~ s/##question_num##/$hash->{question_num}/;
+    for my $var ('question', 'tek', 'subpart', 'misc_latex') {
+        $template =~ s/##$var##/$hash->{$var}/;
+    }
+    my @choices;
+    for my $choice (@{$hash->{choice}}) {
+        my $tex_cmd = $choice->{correct} ? '\CorrectChoice' : '\choice';
+        push @choices, join ' ', ($tex_cmd, $choice->{val});
+    }
+    my $choices = join "\n", @choices;
+    $template =~ s/##choices##/$choices/;
+    return $template;
+}
+
+sub free_response_misc_latex {
+    my ($hash, $format) = @_;
+    my $template = $templates->{$format};
+
+    $template =~ s/##question_num##/$hash->{question_num}/;
+    $hash->{lines} ||= 2.5;
+    for my $var ('question', 'tek', 'lines', 'misc_latex') {
+        $template =~ s/##$var##/$hash->{$var}/;
+    }
+    return $template;
+}
+
 sub load_templates {
     my $dir = shift;
     my @templates = (
         'header', 'default', 'grid', 'long_answers', 'image_subpart',
         'free_response', 'free_response_image', 'footer', 'formula', 'grid_subpart',
-        'long_answers_subpart',
+        'long_answers_subpart', 'formula_long_answers', 'default_misc_subpart',
+        'free_response_misc_latex',
     );
     my %temps;
     for my $tmp (@templates) {

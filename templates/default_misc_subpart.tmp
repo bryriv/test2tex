@@ -1,0 +1,17 @@
+% question ##question_num##
+\question ##question##
+
+\begin{center}
+##misc_latex##
+\end{center}
+
+\begin{addmargin}[2em]{5em} ##subpart## \textit{\textbf{(TEKS ##tek##)}}
+\end{addmargin}
+
+\setlength\columnsep{-1cm}
+\begin{multicols}{2}
+    \begin{choices}
+##choices##
+    \end{choices}
+\end{multicols}
+\vspace*{.1in}
